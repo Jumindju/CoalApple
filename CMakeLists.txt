@@ -15,6 +15,6 @@ link_directories($ENV{SDL_LIB_x64})
 find_package(OpenGL REQUIRED)
 
 # Add files
-add_executable (CoalApple Sources/main.cpp Sources/Context.cpp Sources/Application.cpp)
+add_executable (CoalApple Sources/main.cpp Sources/Context.cpp Sources/Application.cpp Sources/Shaders/Shaders.cpp Sources/Shaders/Shaders.h Sources/VertexBuffer.h Sources/VertexBuffer.cpp)
 
 target_link_libraries(CoalApple ${OPENGL_gl_LIBRARY} SDL2 Assimp glew32  )
