@@ -5,4 +5,5 @@ struct Config
 	int height = 600;
 	bool isFullScreen = false;
 	float fov = 90.0f;
+	float mouseSensitivity = 0.3f;
 };
