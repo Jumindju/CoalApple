@@ -2,6 +2,7 @@
 project (CoalApple)
 
 #Include directories
+include_directories(${PROJECT_SOURCE_DIR})
 include_directories($ENV{ASSIMP_INCLUDE})
 include_directories($ENV{GLEW_INCLUDE})
 include_directories($ENV{SDL_INCLUDE})
@@ -14,6 +15,6 @@ link_directories($ENV{SDL_LIB_x64})
 find_package(OpenGL REQUIRED)
 
 # Add files
-add_executable (CoalApple Sources/*.cpp)
+add_executable (CoalApple Sources/main.cpp Sources/Window.cpp)
 
 target_link_libraries(CoalApple ${OPENGL_gl_LIBRARY} SDL2 Assimp glew32  )
