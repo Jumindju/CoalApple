@@ -42,9 +42,8 @@ Context::Context(const Config config) {
 	glDebugMessageCallback(openGLCallback, 0);
 #endif
 }
-SDL_Window* Context::getWindow()
-{
-	return window;
+void Context::swapWindow() {
+	SDL_GL_SwapWindow(window);
 }
 
 void GLAPIENTRY openGLCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {

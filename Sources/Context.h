@@ -8,7 +8,7 @@ class Context
 {
 public:
 	Context(const Config config);
-	SDL_Window* getWindow();
+	void swapWindow();
 private:
 	SDL_Window* window;
 };
