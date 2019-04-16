@@ -1,7 +1,7 @@
-#include "Application.h";
-#include "defines.h";
+#include "Application.h"
+#include "defines.h"
 #include <SDL.h>
-#include "GL/glew.h";
+#include "GL/glew.h"
 
 Application::Application(const Config config)
 	:camera(config)

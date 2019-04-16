@@ -1,15 +1,16 @@
 ﻿#include <iostream>
 #define GLEW_STATIC
 #define SDL_MAIN_HANDLED
-#include "Context.h"
 #include "Config.h"
+//#include "Application.h"
+#include "Application.h"
 using namespace std;
 
 int main()
 {
-	Config config;
+	const Config config;
 	//config.isFullScreen = true;
-	Context context(config);
+	Application applitcation(config);
 
 	return 0;
 }

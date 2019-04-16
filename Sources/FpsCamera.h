@@ -13,6 +13,6 @@ private:
 	float yaw;
 	float pitch;
 	glm::vec3 lookAt;
-	const float mouseSensetivity;
+	float mouseSensetivity;
 	glm::vec3 up;
 };
