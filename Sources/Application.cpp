@@ -1,38 +1,70 @@
 #include "Application.h"
-#include "defines.h"
 #include <SDL.h>
-#include "GL/glew.h"
+#include <GL/glew.h>
+#include "Shaders/Shaders.h"
+
+Vertex vertices[] = {
+	Vertex{
+		glm::vec3(-0.5f, -0.5f, -0.0f),
+		glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
+	},
+	Vertex{
+		glm::vec3(0.5f, -0.5f, -0.0f),
+		glm::vec4(0.0, 1.0f, 0.0f, 1.0f)
+	},
+	Vertex{
+		glm::vec3(0.0f, 0.5f, -0.0f),
+		glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)
+	}
+};
+uint32 indices[] = {
+	0,1,2
+};
 
 Application::Application(const Config config)
 	:camera(config)
 	,context(config)
+	,renderer(vertices,indices)
 {
-	model = glm::mat4(1.0f);
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+
+	numVertecies = sizeof(vertices)/sizeof(vertices[0]);
+	numIndices = sizeof(indices)/sizeof(indices[0]);
+
+	Shader shader("D:/Programmier-Projekte/C++/CoalApple/Shaders/basic.vert", "D:/Programmier-Projekte/C++/CoalApple/Shaders/basic.frag");
+	shader.bind();
+
+	model = glm::scale(model, glm::vec3(1.2f));
 	camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
 	camera.update();
+
 	modelViewProj = camera.getViewProj() * model;
-	SDL_SetRelativeMouseMode(SDL_TRUE);
+
+	modelViewProjMatrixLoc = glGetUniformLocation(shader.getShaderId(), "u_modelViewProj");
 }
-bool escapeBlocked = false;
-bool closed = false;
-
-bool cameraW = false;
-bool cameraA = false;
-bool cameraS = false;
-bool cameraD = false;
-bool cameraSpace = false;
-bool cameraShift = false;
-
 void Application::runLoop() {
 	uint64 perfCounterFrequency = SDL_GetPerformanceFrequency();
 	uint64 lastCounter = SDL_GetPerformanceCounter();
 
 	while (!closed) {
 		handleEvents();
-		glClearColor(0.1f, 0.6f, 0.5f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		time += delta;
+
+		camera.update();
+		model = glm::rotate(model, 1.0f*delta, glm::vec3(0, 1, 0));
+		modelViewProj = camera.getViewProj()*model;
+		
+		renderer.bindBuffers();
+
+		glUniformMatrix4fv(modelViewProjMatrixLoc, 1, GL_FALSE, &modelViewProj[0][0]);
+		glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
+		
+		renderer.unbindBuffers();
+
 		context.swapWindow();
+		
 		uint64 endCounter = SDL_GetPerformanceCounter();
 		uint64 elapsed = endCounter - lastCounter;
 		delta = ((float)elapsed) / (float)perfCounterFrequency;
@@ -107,9 +139,6 @@ void Application::handleEvents() {
 				camera.moveUp(currSpeed);
 			if (cameraShift)
 				camera.moveUp(-currSpeed);
-			model = glm::rotate(model, 1.0f*delta, glm::vec3(0, 1, 0));
-			modelViewProj = camera.getViewProj()*model;
 		}
-		camera.update();
 	}
 }
