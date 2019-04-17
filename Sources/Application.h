@@ -21,9 +21,9 @@ private:
 	int modelViewProjMatrixLoc;
 	uint32 numVertecies;
 	uint32 numIndices;
-	float delta = 0.0f;
-	float time = 0.0f;
-	float cameraVel = 6.0f;
+	float delta;
+	float time;
+	float cameraSpeed;
 	void handleEvents();
 	bool closed = false;
 	bool escapeBlocked = false;
