@@ -7,31 +7,56 @@
 
 
 Vertex vertices[] = {
-	Vertex{
-		glm::vec3(-0.5f, -0.5f, -0.0f),
-		glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
-	},
-	Vertex{
-		glm::vec3(0.5f, -0.5f, -0.0f),
-		glm::vec4(0.0, 1.0f, 0.0f, 1.0f)
-	},
-	Vertex{
-		glm::vec3(0.0f, 0.5f, -0.0f),
-		glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)
-	}
+Vertex{
+	glm::vec3(0.0f, 0.0f, 0.0f),
+	glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
+},
+Vertex{
+	glm::vec3(5.0f, 0.0f, 0.0f),
+	glm::vec4(0.0, 1.0f, 0.0f, 1.0f)
+},
+Vertex{
+	glm::vec3(0.0f, 5.0f, 0.0f),
+	glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)
+},
+Vertex{
+	glm::vec3(5.0f, 5.0f, 0.0f),
+	glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
+},
+Vertex{
+	glm::vec3(0.0f, 0.0f, 5.0f),
+	glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
+},
+Vertex{
+	glm::vec3(5.0f, 0.0f, 5.0f),
+	glm::vec4(0.0, 1.0f, 0.0f, 1.0f)
+},
+Vertex{
+	glm::vec3(0.0f, 5.0f, 5.0f),
+	glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)
+},
+Vertex{
+	glm::vec3(5.0f, 5.0f, 5.0f),
+	glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
+},
 };
 uint32 indices[] = {
-	0,1,2
+	0,1,2,3,
+	1,3,5,7,
+	4,5,6,7,
+	0,2,4,6,
+	2,3,6,7,
+	0,1,4,5
 };
+
+uint32 numVertecies = sizeof(vertices) / sizeof(vertices[0]);
+uint32 numIndices = sizeof(indices) / sizeof(indices[0]);
 
 Application::Application(const Config config)
 	:camera(config)
-	,context(config)
-	,renderer(vertices,indices)
+	, context(config)
+	, renderer(vertices, indices,numVertecies,numIndices)
 {
-	numVertecies = sizeof(vertices)/sizeof(vertices[0]);
-	numIndices = sizeof(indices)/sizeof(indices[0]);
-
 	Shader shader("D:/Programmier-Projekte/C++/CoalApple/Shaders/basic.vert", "D:/Programmier-Projekte/C++/CoalApple/Shaders/basic.frag");
 	shader.bind();
 	modelViewProjMatrixLoc = glGetUniformLocation(shader.getShaderId(), "u_modelViewProj");
@@ -48,14 +73,13 @@ void Application::runLoop() {
 	modelViewProj = camera.getViewProj() * model;
 
 	SDL_SetRelativeMouseMode(SDL_TRUE);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-
+	//glEnable(GL_CULL_FACE)
+	//glEnable(GL_DEPTH_TEST);
 	while (!closed) {
 		handleEvents();
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.04f, 0.1f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+
 		time += delta;
 		if (cameraW)
 			camera.moveFront(delta * cameraSpeed);
@@ -71,19 +95,18 @@ void Application::runLoop() {
 			camera.moveUp(-delta * cameraSpeed);
 		}
 
-		camera.update();
-		//model = glm::rotate(model, 1.0f*delta, glm::vec3(0, 1, 0));
 		modelViewProj = camera.getViewProj() * model;
+		camera.update();
 
 		renderer.bindBuffers();
 
 		glUniformMatrix4fv(modelViewProjMatrixLoc, 1, GL_FALSE, &modelViewProj[0][0]);
-		glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
-		
+		glDrawElements(GL_TRIANGLE_STRIP, numIndices, GL_UNSIGNED_INT, 0);
+
 		renderer.unbindBuffers();
 
 		context.swapWindow();
-		
+
 		uint64 endCounter = SDL_GetPerformanceCounter();
 		uint64 elapsed = endCounter - lastCounter;
 		delta = ((float)elapsed) / (float)perfCounterFrequency;

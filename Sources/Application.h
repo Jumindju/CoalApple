@@ -18,9 +18,7 @@ private:
 	Renderer renderer;
 	glm::mat4 model=glm::mat4(1.0f);
 	glm::mat4 modelViewProj;
-	int modelViewProjMatrixLoc;
-	uint32 numVertecies;
-	uint32 numIndices;
+	int modelViewProjMatrixLoc;;
 	float delta;
 	float time;
 	float cameraSpeed;
